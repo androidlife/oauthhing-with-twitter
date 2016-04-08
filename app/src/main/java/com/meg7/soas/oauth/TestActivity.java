@@ -23,10 +23,10 @@ public class TestActivity extends AppCompatActivity {
 //        stringParseTest();
     }
 
-    private void stringParseTest(){
-        String requestResponse ="oauth_token=EgPCLwAAAAAAucbNAAABU_U09ks&oauth_token_secret=FAOMbVS18VzQhlmnen4gEnMjUiIOhBf7&oauth_callback_confirmed=true";
-        Timber.d("Request Token = %s",OAuthHelper.extract(requestResponse,OAuthHelper.TOKEN_REGEX));
-        Timber.d("Request Secret = %s",OAuthHelper.extract(requestResponse,OAuthHelper.SECRET_REGEX));
+    private void stringParseTest() {
+        String requestResponse = "oauth_token=EgPCLwAAAAAAucbNAAABU_U09ks&oauth_token_secret=FAOMbVS18VzQhlmnen4gEnMjUiIOhBf7&oauth_callback_confirmed=true";
+        Timber.d("Request Token = %s", OAuthHelper.extract(requestResponse, OAuthHelper.TOKEN_REGEX));
+        Timber.d("Request Secret = %s", OAuthHelper.extract(requestResponse, OAuthHelper.SECRET_REGEX));
     }
 
     private void requestTokenGeneration() {
@@ -52,10 +52,14 @@ public class TestActivity extends AppCompatActivity {
     }
 
 
+    Token requestToken;
+    String oauthVerifier;
+
     private void beginUserAuthentication(Token token) {
+        requestToken = token;
         String authenticationUrl = OAuthHelper.generateAuthorizationUrl(token.token);
         Intent oauthLoginIntent = OAuthLoginActivity.launchActivity(this, authenticationUrl, ApiEndPoints.CALLBACK_URL);
-        startActivityForResult(oauthLoginIntent,10);
+        startActivityForResult(oauthLoginIntent, 10);
 
     }
 
@@ -65,6 +69,29 @@ public class TestActivity extends AppCompatActivity {
         if (requestCode == 10 && resultCode == Activity.RESULT_OK && data != null) {
             String authorizationToken = data.getStringExtra(OAuthLoginActivity.AUTHORIZE_TOKEN);
             String authorizationVerifier = data.getStringExtra(OAuthLoginActivity.AUTHORIZE_VERIFIER);
+            requestAccessToken(authorizationVerifier);
         }
+    }
+
+    private void requestAccessToken(String oauthVerifier) {
+        this.oauthVerifier = oauthVerifier;
+        String authorizationHeader = OAuthHelper.generateAccessToken(requestToken, oauthVerifier, ApiEndPoints.TWITTER_CONSUMER_KEY, ApiEndPoints.TWITTER_CONSUMER_SECRET);
+        Timber.d("Authorization Header for access token = %s",authorizationHeader);
+        DataManager.getInstance().getAccessToken(new DataCallback<Token>() {
+            @Override
+            public void onResponse(Token response) {
+
+            }
+
+            @Override
+            public void onFailure(String error) {
+
+            }
+
+            @Override
+            public void cancel() {
+
+            }
+        },authorizationHeader);
     }
 }
