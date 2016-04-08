@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.wordpress.laaptu.com.meg7.soas.oauth"
+        applicationId "com.meg7.soas.oauth"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1

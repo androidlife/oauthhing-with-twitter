@@ -12,7 +12,7 @@ import retrofit2.http.POST;
 public interface ApiService {
 
     @POST(ApiEndPoints.REQUEST_TOKEN_URL)
-    Call<ResponseBody> getAccessToken(
+    Call<ResponseBody> getRequestToken(
             @Header("Authorization") String authorization
     );
 

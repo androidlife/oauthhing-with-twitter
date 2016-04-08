@@ -80,7 +80,7 @@ public class OAuthHelper {
         //remember to keep the sequence
         ArrayList<Parameter> params = new ArrayList<>();
         String httpMethod = POST;
-        String postUrl = ApiEndPoints.REQUEST_TOKEN_URL;
+        String postUrl = encode(ApiEndPoints.REQUEST_TOKEN_URL);
 
         // if callback url is not given, while authenticating, it may point the user to pin verification after authorization
         params.add(new Parameter(OAUTH_CALLBACK, ApiEndPoints.CALLBACK_URL));
