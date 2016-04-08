@@ -3,6 +3,7 @@
     package="com.wordpress.laaptu.oauth">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name="com.meg7.soas.oauth.OauthApplication"
         android:allowBackup="true"
@@ -15,6 +16,7 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -22,6 +24,8 @@
         <meta-data
             android:name="com.meg7.soas.oauth.imageloaders.GlideConfigurator"
             android:value="GlideModule" />
+
+        <activity android:name="com.meg7.soas.oauth.TestActivity"></activity>
     </application>
 
 </manifest>
