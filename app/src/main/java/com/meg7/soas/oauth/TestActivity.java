@@ -7,6 +7,7 @@ import com.meg7.soas.oauth.api.ApiEndPoints;
 import com.meg7.soas.oauth.api.DataCallback;
 import com.meg7.soas.oauth.api.DataManager;
 import com.meg7.soas.oauth.api.oauth.OAuthHelper;
+import com.meg7.soas.oauth.api.oauth.Token;
 import com.wordpress.laaptu.oauth.R;
 
 import timber.log.Timber;
@@ -23,10 +24,10 @@ public class TestActivity extends AppCompatActivity {
     private void requestTokenGeneration() {
         String authorizationHeader = OAuthHelper.generateRequestTokenHeader(ApiEndPoints.TWITTER_CONSUMER_KEY,
                 ApiEndPoints.TWITTER_CONSUMER_SECRET, ApiEndPoints.CALLBACK_URL);
-        Timber.d("AuthorizationHeader =%s",authorizationHeader);
-        DataManager.getInstance().getRequestToken(new DataCallback<String>() {
+        Timber.d("AuthorizationHeader =%s", authorizationHeader);
+        DataManager.getInstance().getRequestToken(new DataCallback<Token>() {
             @Override
-            public void onResponse(String response) {
+            public void onResponse(Token token) {
 
             }
 
@@ -39,6 +40,12 @@ public class TestActivity extends AppCompatActivity {
             public void cancel() {
 
             }
-        },authorizationHeader);
+        }, authorizationHeader);
+    }
+
+
+    private void beginUserAuthentication(Token token) {
+        String authenticationUrl = OAuthHelper.generateAuthorizationUrl(token.token);
+
     }
 }

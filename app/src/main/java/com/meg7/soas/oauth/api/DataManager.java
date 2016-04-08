@@ -1,6 +1,8 @@
 package com.meg7.soas.oauth.api;
 
 import com.meg7.soas.oauth.api.networklibs.RetrofitManager;
+import com.meg7.soas.oauth.api.oauth.OAuthHelper;
+import com.meg7.soas.oauth.api.oauth.Token;
 
 import java.io.IOException;
 
@@ -33,24 +35,31 @@ public class DataManager {
         return dataManager;
     }
 
-    public void getRequestToken(DataCallback<String> dataCallback, String authorizationHeader) {
+    public void getRequestToken(final DataCallback<Token> dataCallback, String authorizationHeader) {
         RetrofitManager.getApiService().getRequestToken(authorizationHeader).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response != null && response.body() != null) {
                     try {
-                        Timber.d("Response =%s",response.body().string());
+                        String requestResponse = response.body().toString();
+                        Timber.d("Request token Response = %s", response.body().string());
+                        String requestToken = OAuthHelper.extract(requestResponse, OAuthHelper.TOKEN_REGEX);
+                        String requestTokenSecret = OAuthHelper.extract(requestResponse, OAuthHelper.SECRET_REGEX);
+                        Timber.d("Request Token = %s ", requestToken);
+                        Timber.d("Request token secret = %s ", requestTokenSecret);
+                        dataCallback.onResponse(new Token(requestToken, requestTokenSecret));
+                        return;
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    return;
+
                 }
-                Timber.d("Error getting request token");
+                Timber.e("There was error fetching request token");
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Timber.d("Error gettting request token");
+                Timber.e("There was error fetching request token");
             }
         });
     }

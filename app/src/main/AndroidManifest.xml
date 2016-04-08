@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.wordpress.laaptu.oauth">
+    package="com.meg7.soas.oauth">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -25,7 +25,12 @@
             android:name="com.meg7.soas.oauth.imageloaders.GlideConfigurator"
             android:value="GlideModule" />
 
-        <activity android:name="com.meg7.soas.oauth.TestActivity"></activity>
+        <activity
+            android:name="com.meg7.soas.oauth.TestActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.meg7.soas.oauth.OAuthLoginActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

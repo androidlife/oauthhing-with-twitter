@@ -5,16 +5,20 @@ import android.util.Base64;
 import com.meg7.soas.oauth.api.ApiEndPoints;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+
+import timber.log.Timber;
 
 /**
  * Shamelessly copied methods and techniques from
@@ -72,7 +76,8 @@ public class OAuthHelper {
             OAUTH_CONSUMER_KEY = "oauth_consumer_key", OAUTH_NONCE = "oauth_nonce",
             OAUTH_SIGNATURE_METHOD = "oauth_signature_method", HMAC__SHA1 = "HMAC-SHA1",
             OAUTH_TIMESTAMP = "oauth_timestamp",
-            OAUTH_VERSION = "oauth_version", VERSION_1 = "1.0", OAUTH = "OAuth ", OAUTH_SIGNATURE = "oauth_signature", OAUTH_CALLBACK = "oauth_callback";
+            OAUTH_VERSION = "oauth_version", VERSION_1 = "1.0", OAUTH = "OAuth ",
+            OAUTH_SIGNATURE = "oauth_signature", OAUTH_CALLBACK = "oauth_callback", OAUTH_TOKEN = "oauth_token";
 
     //http://oauth.googlecode.com/svn/code/javascript/example/signature.html
     //https://dev.twitter.com/oauth/overview/creating-signatures
@@ -93,7 +98,9 @@ public class OAuthHelper {
         //all above are required to generate the signature
 
         String signatureBaseString = generateBaseString(httpMethod, postUrl, params);
+        Timber.d("SignatureBaseString = %s", signatureBaseString);
         String signatureString = generateHMACSignature(signatureBaseString, ApiEndPoints.TWITTER_CONSUMER_SECRET, "");
+        Timber.d("SignatureString = %s", signatureString);
         //now time to generate Authorization header string
         params.add(new Parameter(OAUTH_SIGNATURE, signatureString));
         return generateHeaderString(params);
@@ -159,6 +166,30 @@ public class OAuthHelper {
         //nonce ( must be a random number)
         values[1] = String.valueOf(ts + random.nextInt());
         return values;
+    }
+
+
+    public static final Pattern TOKEN_REGEX = Pattern.compile("oauth_token=([^&]+)");
+    public static final Pattern SECRET_REGEX = Pattern.compile("oauth_token_secret=([^&]*)");
+
+    public static String extract(String response, Pattern p) {
+        Matcher matcher = p.matcher(response);
+        if (matcher.find() && matcher.groupCount() >= 1) {
+            try {
+                return URLDecoder.decode(matcher.group(1), UTF_8);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        throw new RuntimeException("Response body is incorrect. Can't extract token and secret from this: '" + response + "'", null);
+
+    }
+
+
+    public static String generateAuthorizationUrl(String requestToken) {
+        String authenticationUrl = ApiEndPoints.AUTHENTICATE_URL + "?oauth_token=" + requestToken;
+        Timber.d("AuthenticationURL = %s", authenticationUrl);
+        return authenticationUrl;
     }
 
 }
