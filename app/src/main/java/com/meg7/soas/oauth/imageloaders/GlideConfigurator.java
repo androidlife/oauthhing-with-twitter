@@ -18,7 +18,7 @@ import com.bumptech.glide.load.engine.bitmap_recycle.LruBitmapPool;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.module.GlideModule;
-import com.wordpress.laaptu.oauth.R;
+import com.meg7.soas.oauth.R;
 
 /**
  */

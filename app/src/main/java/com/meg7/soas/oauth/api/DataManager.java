@@ -41,8 +41,8 @@ public class DataManager {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response != null && response.body() != null) {
                     try {
-                        String requestResponse = response.body().toString();
-                        Timber.d("Request token Response = %s", response.body().string());
+                        String requestResponse = response.body().string();
+                        Timber.d("Request token Response = %s", requestResponse);
                         String requestToken = OAuthHelper.extract(requestResponse, OAuthHelper.TOKEN_REGEX);
                         String requestTokenSecret = OAuthHelper.extract(requestResponse, OAuthHelper.SECRET_REGEX);
                         Timber.d("Request Token = %s ", requestToken);
