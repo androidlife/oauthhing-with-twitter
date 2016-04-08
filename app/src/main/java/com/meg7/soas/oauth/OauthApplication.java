@@ -1,4 +1,4 @@
-package com.wordpress.laaptu.oauthtweet;
+package com.meg7.soas.oauth;
 
 import android.app.Application;
 

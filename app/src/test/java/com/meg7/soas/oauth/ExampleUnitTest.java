@@ -1,4 +1,4 @@
-package com.wordpress.laaptu.oauthtweet;
+package com.wordpress.laaptu.oauth;
 
 import org.junit.Test;
 

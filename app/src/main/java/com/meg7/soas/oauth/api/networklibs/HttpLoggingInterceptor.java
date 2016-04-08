@@ -1,4 +1,4 @@
-package com.wordpress.laaptu.oauthtweet.api.networklibs;
+package com.meg7.soas.oauth.api.networklibs;
 
 /*
  * Copyright (C) 2015 Square, Inc.

@@ -1,7 +1,9 @@
-package com.wordpress.laaptu.oauthtweet;
+package com.meg7.soas.oauth;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+
+import com.wordpress.laaptu.oauth.R;
 
 public class MainActivity extends AppCompatActivity {
 

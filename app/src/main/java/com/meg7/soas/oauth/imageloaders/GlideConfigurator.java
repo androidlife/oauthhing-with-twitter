@@ -1,4 +1,4 @@
-package com.wordpress.laaptu.oauthtweet.imageloaders;
+package com.meg7.soas.oauth.imageloaders;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -18,9 +18,7 @@ import com.bumptech.glide.load.engine.bitmap_recycle.LruBitmapPool;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.module.GlideModule;
-import com.wordpress.laaptu.oauthtweet.R;
-
-import timber.log.Timber;
+import com.wordpress.laaptu.oauth.R;
 
 /**
  */
@@ -68,7 +66,6 @@ public class GlideConfigurator implements GlideModule {
             super(context);
             this.path = path;
             this.borderColor = borderColor;
-            Timber.d("BorderColor =%d", borderColor);
         }
 
         @Override

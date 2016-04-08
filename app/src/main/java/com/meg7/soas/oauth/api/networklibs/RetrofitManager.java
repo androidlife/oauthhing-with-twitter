@@ -1,15 +1,7 @@
-package com.wordpress.laaptu.oauthtweet.api.networklibs;
-
-import retrofit2.Retrofit;
-
-import retrofit2.Retrofit;
+package com.meg7.soas.oauth.api.networklibs;
 
 
-import retrofit2.Retrofit;
-
-
-import com.wordpress.laaptu.oauthtweet.api.networklibs.ApiService;
-import com.wordpress.laaptu.oauthtweet.api.networklibs.HttpLoggingInterceptor;
+import com.meg7.soas.oauth.api.ApiEndPoints;
 
 import java.util.concurrent.TimeUnit;
 
@@ -39,7 +31,7 @@ public class RetrofitManager {
                     okhttpClientBuilder.connectTimeout(2, TimeUnit.MINUTES);
                     okhttpClientBuilder.readTimeout(2, TimeUnit.MINUTES);
                     retrofit = new Retrofit.Builder()
-                            .baseUrl(EndPoints.BASE_URL)
+                            .baseUrl(ApiEndPoints.BASE_URL)
                             .addConverterFactory(GsonConverterFactory.create())
                             .client(okhttpClientBuilder.build())
                             .build();
