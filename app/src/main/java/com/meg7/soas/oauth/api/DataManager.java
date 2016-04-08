@@ -63,4 +63,34 @@ public class DataManager {
             }
         });
     }
+
+    public void getAccessToken(final DataCallback<Token> dataCallback, String authorizationHeader) {
+        RetrofitManager.getApiService().getAccessToken(authorizationHeader).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response != null && response.body() != null) {
+                    try {
+                        String requestResponse = response.body().string();
+                        Timber.d("Access token Response = %s", requestResponse);
+                        String requestToken = OAuthHelper.extract(requestResponse, OAuthHelper.TOKEN_REGEX);
+                        String requestTokenSecret = OAuthHelper.extract(requestResponse, OAuthHelper.SECRET_REGEX);
+                        Timber.d("Access Token = %s ", requestToken);
+                        Timber.d("Access token secret = %s ", requestTokenSecret);
+                        dataCallback.onResponse(new Token(requestToken, requestTokenSecret,requestResponse));
+                        return;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                Timber.e("There was error fetching access token");
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Timber.e("There was error fetching access token");
+            }
+        });
+
+    }
 }

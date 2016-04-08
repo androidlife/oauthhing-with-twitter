@@ -77,7 +77,7 @@ public class OAuthHelper {
             OAUTH_SIGNATURE_METHOD = "oauth_signature_method", HMAC__SHA1 = "HMAC-SHA1",
             OAUTH_TIMESTAMP = "oauth_timestamp",
             OAUTH_VERSION = "oauth_version", VERSION_1 = "1.0", OAUTH = "OAuth ",
-            OAUTH_SIGNATURE = "oauth_signature", OAUTH_CALLBACK = "oauth_callback", OAUTH_TOKEN = "oauth_token";
+            OAUTH_SIGNATURE = "oauth_signature", OAUTH_CALLBACK = "oauth_callback", OAUTH_TOKEN = "oauth_token",OAUTH_VERIFIER="oauth_verifier";
 
     //http://oauth.googlecode.com/svn/code/javascript/example/signature.html
     //https://dev.twitter.com/oauth/overview/creating-signatures
@@ -88,8 +88,8 @@ public class OAuthHelper {
         String postUrl = encode(ApiEndPoints.REQUEST_TOKEN_URL);
 
         // if callback url is not given, while authenticating, it may point the user to pin verification after authorization
-        params.add(new Parameter(OAUTH_CALLBACK, ApiEndPoints.CALLBACK_URL));
-        params.add(new Parameter(OAUTH_CONSUMER_KEY, ApiEndPoints.TWITTER_CONSUMER_KEY));
+        params.add(new Parameter(OAUTH_CALLBACK, callbackUrl));
+        params.add(new Parameter(OAUTH_CONSUMER_KEY, consumerKey));
         String[] timeStampNNonce = getTimeStampNNonce();
         params.add(new Parameter(OAUTH_NONCE, timeStampNNonce[1]));
         params.add(new Parameter(OAUTH_SIGNATURE_METHOD, HMAC__SHA1));
@@ -99,7 +99,7 @@ public class OAuthHelper {
 
         String signatureBaseString = generateBaseString(httpMethod, postUrl, params);
         Timber.d("SignatureBaseString = %s", signatureBaseString);
-        String signatureString = generateHMACSignature(signatureBaseString, ApiEndPoints.TWITTER_CONSUMER_SECRET, "");
+        String signatureString = generateHMACSignature(signatureBaseString, consumerSecret, "");
         Timber.d("SignatureString = %s", signatureString);
         //now time to generate Authorization header string
         params.add(new Parameter(OAUTH_SIGNATURE, signatureString));
@@ -190,6 +190,30 @@ public class OAuthHelper {
         String authenticationUrl = ApiEndPoints.AUTHENTICATE_URL + "?oauth_token=" + requestToken;
         Timber.d("AuthenticationURL = %s", authenticationUrl);
         return authenticationUrl;
+    }
+
+
+    //For generation of access token
+    public static String generateAccessToken(Token requestToken,String authVerifier,String consumerKey,String consumerSecret) {
+        ArrayList<Parameter> params = new ArrayList<>();
+        String httpMethod = POST;
+        String postUrl = encode(ApiEndPoints.ACCESS_TOKEN_URL);
+        //remember the sequence
+        params.add(new Parameter(OAUTH_CONSUMER_KEY, consumerKey));
+        String[] timeStampNNonce = getTimeStampNNonce();
+        params.add(new Parameter(OAUTH_NONCE, timeStampNNonce[1]));
+        params.add(new Parameter(OAUTH_SIGNATURE_METHOD, HMAC__SHA1));
+        params.add(new Parameter(OAUTH_TIMESTAMP, timeStampNNonce[0]));
+        params.add(new Parameter(OAUTH_TOKEN,requestToken.token));
+        params.add(new Parameter(OAUTH_VERIFIER,authVerifier));
+        params.add(new Parameter(OAUTH_VERSION, VERSION_1));
+
+        String signatureBaseString = generateBaseString(httpMethod, postUrl, params);
+        Timber.d("SignatureBaseString = %s", signatureBaseString);
+        String signatureString = generateHMACSignature(signatureBaseString, consumerSecret, requestToken.tokenSecret);
+        Timber.d("SignatureString = %s", signatureString);
+        params.add(new Parameter(OAUTH_SIGNATURE, signatureString));
+        return generateHeaderString(params);
     }
 
 }

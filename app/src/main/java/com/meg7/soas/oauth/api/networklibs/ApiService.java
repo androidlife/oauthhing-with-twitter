@@ -16,4 +16,9 @@ public interface ApiService {
             @Header("Authorization") String authorization
     );
 
+    @POST(ApiEndPoints.ACCESS_TOKEN_URL)
+    Call<ResponseBody> getAccessToken(
+            @Header("Authorization") String authorization
+    );
+
 }
