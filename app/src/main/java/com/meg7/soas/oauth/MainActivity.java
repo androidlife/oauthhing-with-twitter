@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
             setCurrentFragment(savedInstanceState.getInt(CURRENT_FRAG, FRAG_SPLASH));
             return;
         }
-        setCurrentFragment(FRAG_SPLASH);
+        setCurrentFragment(FRAG_FEED);
     }
 
     private void setCurrentFragment(int currentFrag) {
