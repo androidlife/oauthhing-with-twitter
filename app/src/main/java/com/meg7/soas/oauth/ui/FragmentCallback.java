@@ -1,4 +1,4 @@
-package com.meg7.soas.oauth.ui.base;
+package com.meg7.soas.oauth.ui;
 
 /**
  */

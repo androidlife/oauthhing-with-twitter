@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.meg7.soas.oauth.ui.base.FeedFragment;
-import com.meg7.soas.oauth.ui.base.FragmentCallback;
-import com.meg7.soas.oauth.ui.base.SplashFragment;
+import com.meg7.soas.oauth.ui.FeedFragment;
+import com.meg7.soas.oauth.ui.FragmentCallback;
+import com.meg7.soas.oauth.ui.SplashFragment;
 
 
 public class MainActivity extends AppCompatActivity implements FragmentCallback {

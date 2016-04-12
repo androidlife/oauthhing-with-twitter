@@ -1,10 +1,11 @@
-package com.meg7.soas.oauth.ui.base;
+package com.meg7.soas.oauth.ui;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 
 import com.meg7.soas.oauth.R;
+import com.meg7.soas.oauth.ui.base.BaseFragment;
 
 /**
  */
