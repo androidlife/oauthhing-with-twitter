@@ -77,7 +77,7 @@ public class OAuthHelper {
             OAUTH_SIGNATURE_METHOD = "oauth_signature_method", HMAC__SHA1 = "HMAC-SHA1",
             OAUTH_TIMESTAMP = "oauth_timestamp",
             OAUTH_VERSION = "oauth_version", VERSION_1 = "1.0", OAUTH = "OAuth ",
-            OAUTH_SIGNATURE = "oauth_signature", OAUTH_CALLBACK = "oauth_callback", OAUTH_TOKEN = "oauth_token",OAUTH_VERIFIER="oauth_verifier";
+            OAUTH_SIGNATURE = "oauth_signature", OAUTH_CALLBACK = "oauth_callback", OAUTH_TOKEN = "oauth_token", OAUTH_VERIFIER = "oauth_verifier";
 
     //http://oauth.googlecode.com/svn/code/javascript/example/signature.html
     //https://dev.twitter.com/oauth/overview/creating-signatures
@@ -194,18 +194,18 @@ public class OAuthHelper {
 
 
     //For generation of access token
-    public static String generateAccessToken(Token requestToken,String authVerifier,String consumerKey,String consumerSecret) {
+    public static String generateAccessToken(Token requestToken, String authVerifier, String consumerKey, String consumerSecret) {
         ArrayList<Parameter> params = new ArrayList<>();
         String httpMethod = POST;
         String postUrl = encode(ApiEndPoints.ACCESS_TOKEN_URL);
-        //remember the sequence
+        //remember the sequence which must be in alphabetical order of encoded key
         params.add(new Parameter(OAUTH_CONSUMER_KEY, consumerKey));
         String[] timeStampNNonce = getTimeStampNNonce();
         params.add(new Parameter(OAUTH_NONCE, timeStampNNonce[1]));
         params.add(new Parameter(OAUTH_SIGNATURE_METHOD, HMAC__SHA1));
         params.add(new Parameter(OAUTH_TIMESTAMP, timeStampNNonce[0]));
-        params.add(new Parameter(OAUTH_TOKEN,requestToken.token));
-        params.add(new Parameter(OAUTH_VERIFIER,authVerifier));
+        params.add(new Parameter(OAUTH_TOKEN, requestToken.token));
+        params.add(new Parameter(OAUTH_VERIFIER, authVerifier));
         params.add(new Parameter(OAUTH_VERSION, VERSION_1));
 
         String signatureBaseString = generateBaseString(httpMethod, postUrl, params);
@@ -214,6 +214,35 @@ public class OAuthHelper {
         Timber.d("SignatureString = %s", signatureString);
         params.add(new Parameter(OAUTH_SIGNATURE, signatureString));
         return generateHeaderString(params);
+    }
+
+
+    public static final String INCLUDE_ENTITIES = "include_entities";
+    public static final String STATUS = "status";
+
+    public static String generateStatusPostHeaderString(Token accessToken, String consumerKey, String consumerSecret, String status) {
+        ArrayList<Parameter> params = new ArrayList<>();
+        String httpMethod = POST;
+        String postUrl = encode(ApiEndPoints.TWEET_POST_URL);
+
+        params.add(new Parameter(INCLUDE_ENTITIES, "true"));
+        params.add(new Parameter(OAUTH_CONSUMER_KEY, consumerKey));
+        String[] timeStampNNonce = getTimeStampNNonce();
+        params.add(new Parameter(OAUTH_NONCE, timeStampNNonce[1]));
+        params.add(new Parameter(OAUTH_SIGNATURE_METHOD, HMAC__SHA1));
+        params.add(new Parameter(OAUTH_TIMESTAMP, timeStampNNonce[0]));
+        params.add(new Parameter(OAUTH_TOKEN, accessToken.token));
+        params.add(new Parameter(OAUTH_VERSION, VERSION_1));
+        params.add(new Parameter(STATUS, status));
+
+        String signatureBaseString = generateBaseString(httpMethod, postUrl, params);
+        //signatureBaseString ="POST&https%3A%2F%2Fapi.twitter.com%2F1%2Fstatuses%2Fupdate.json&include_entities%3Dtrue%26oauth_consumer_key%3Dxvz1evFS4wEEPTGEFPHBog%26oauth_nonce%3DkYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1318622958%26oauth_token%3D370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb%26oauth_version%3D1.0%26status%3DHello%2520Ladies%2520%252B%2520Gentlemen%252C%2520a%2520signed%2520OAuth%2520request%2521";
+        Timber.d("SignatureBaseString = %s", signatureBaseString);
+        String signatureString = generateHMACSignature(signatureBaseString, consumerSecret, accessToken.tokenSecret);
+        Timber.d("SignatureString = %s", signatureString);
+        params.add(new Parameter(OAUTH_SIGNATURE, signatureString));
+        return generateHeaderString(params);
+
     }
 
 }

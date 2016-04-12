@@ -8,9 +8,16 @@ import android.support.v7.app.AppCompatActivity;
 import com.meg7.soas.oauth.api.ApiEndPoints;
 import com.meg7.soas.oauth.api.DataCallback;
 import com.meg7.soas.oauth.api.DataManager;
+import com.meg7.soas.oauth.api.networklibs.RetrofitManager;
 import com.meg7.soas.oauth.api.oauth.OAuthHelper;
 import com.meg7.soas.oauth.api.oauth.Token;
 
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class TestActivity extends AppCompatActivity {
@@ -19,8 +26,45 @@ public class TestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
-        requestTokenGeneration();
+//        requestTokenGeneration();
 //        stringParseTest();
+        postStatusTest();
+    }
+
+    String accToken = "34595673-GFl1Rtut7Ogi1mLRClxM3teBWHnytyauAzp3oMjva";
+    String accTokenSecret = "5n9lrFtNKmPqpxwpzIX5x3Q541JrF0PLICqW5mPAbqPbC";
+
+    private void postStatusTest() {
+        Token accessToken = new Token(accToken, accTokenSecret);
+        String status = "Hello";
+        String authorizationHeader =
+                OAuthHelper.generateStatusPostHeaderString(
+                        accessToken, ApiEndPoints.TWITTER_CONSUMER_KEY, ApiEndPoints.TWITTER_CONSUMER_SECRET,
+                        status
+                );
+        Timber.d("Authorization Header = %s", authorizationHeader);
+        RetrofitManager.getApiService().postTweet(authorizationHeader, status, true).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response != null && response.body() != null) {
+                    try {
+                        String responseString = response.body().string();
+                        Timber.d("Response String =%s", responseString);
+                        return;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Timber.e("Error making post");
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Timber.e("Error making post");
+
+            }
+        });
+
     }
 
     private void stringParseTest() {
@@ -76,7 +120,7 @@ public class TestActivity extends AppCompatActivity {
     private void requestAccessToken(String oauthVerifier) {
         this.oauthVerifier = oauthVerifier;
         String authorizationHeader = OAuthHelper.generateAccessToken(requestToken, oauthVerifier, ApiEndPoints.TWITTER_CONSUMER_KEY, ApiEndPoints.TWITTER_CONSUMER_SECRET);
-        Timber.d("Authorization Header for access token = %s",authorizationHeader);
+        Timber.d("Authorization Header for access token = %s", authorizationHeader);
         DataManager.getInstance().getAccessToken(new DataCallback<Token>() {
             @Override
             public void onResponse(Token response) {
@@ -92,6 +136,6 @@ public class TestActivity extends AppCompatActivity {
             public void cancel() {
 
             }
-        },authorizationHeader);
+        }, authorizationHeader);
     }
 }

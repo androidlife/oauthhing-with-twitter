@@ -28,4 +28,7 @@ public class ApiEndPoints {
     //callback url where you are presented with
     public static final String CALLBACK_URL = "http://www.lftechnology.com";
 
+    //API for posting data
+    public static final String TWEET_POST_URL="https://api.twitter.com/1.1/statuses/update.json";
+
 }
