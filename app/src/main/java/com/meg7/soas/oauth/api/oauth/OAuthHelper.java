@@ -7,6 +7,7 @@ import com.meg7.soas.oauth.api.ApiEndPoints;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,6 +38,9 @@ public class OAuthHelper {
     private static final String UTF_8 = "UTF-8";
     private static final Map<String, String> ENCODING_RULES;
     private static final String HMAC_SHA1 = "HmacSHA1";
+    private static final String MD5 = "MD5";
+    private static final String SHA1 = "SHA-1";
+    private static final String SHA_256 = "SHA-256";
     private static final String EMPTY_STRING = "";
     private static final String CARRIAGE_RETURN = "\r\n";
     private static final String PARAM_SEPARATOR = ", ";
@@ -124,19 +128,12 @@ public class OAuthHelper {
     //https://github.com/scribejava/scribejava/blob/master/scribejava-core/src/main/java/com/github/scribejava/core/services/HMACSha1SignatureService.java
     public static String generateHMACSignature(String signatureBaseString, String consumerSecret, String tokenSecret) {
         try {
-            return doSign(signatureBaseString, encode(consumerSecret) + "&" + encode(tokenSecret));
+            return doSignWithSHA1(signatureBaseString, encode(consumerSecret) + "&" + encode(tokenSecret));
         } catch (Exception e) {
             throw new RuntimeException("Unable to generate signature");
         }
     }
 
-    private static String doSign(String toSign, String keyString) throws Exception {
-        SecretKeySpec key = new SecretKeySpec((keyString).getBytes(UTF_8), HMAC_SHA1);
-        Mac mac = Mac.getInstance(HMAC_SHA1);
-        mac.init(key);
-        byte[] bytes = mac.doFinal(toSign.getBytes(UTF_8));
-        return Base64.encodeToString(bytes, Base64.CRLF).replace(CARRIAGE_RETURN, EMPTY_STRING);
-    }
 
     private static final String AMPERSAND_SEPARATED_STRING = "%s&%s&%s";
 
@@ -243,6 +240,78 @@ public class OAuthHelper {
         params.add(new Parameter(OAUTH_SIGNATURE, signatureString));
         return generateHeaderString(params);
 
+    }
+
+    //All the signing test
+    public static String doSignWithSHA1(String toSign, String keyString) throws Exception {
+        SecretKeySpec key = new SecretKeySpec((keyString).getBytes(UTF_8), HMAC_SHA1);
+        Mac mac = Mac.getInstance(HMAC_SHA1);
+        mac.init(key);
+        byte[] bytes = mac.doFinal(toSign.getBytes(UTF_8));
+        return Base64.encodeToString(bytes, Base64.CRLF).replace(CARRIAGE_RETURN, EMPTY_STRING);
+    }
+
+
+    //MD5 hash generation
+    public static String generateMD5Hash(String textToBeHashed) {
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance(MD5);
+            //here encoding doesn't seem to create an effect
+            //messageDigest.update(textToBeHashed.getBytes(UTF_8));
+            messageDigest.update(textToBeHashed.getBytes());
+            byte[] messageDigestByte = messageDigest.digest();
+            StringBuffer MD5Hash = new StringBuffer();
+            String h;
+            for (int i = 0; i < messageDigestByte.length; ++i) {
+                h = Integer.toHexString((0xFF & messageDigestByte[i]) | 0x100).substring(1, 3);
+                MD5Hash.append(h);
+            }
+            return MD5Hash.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Couldn't generate MD5 hash for " + textToBeHashed);
+        }
+    }
+
+    public static String generateMD5HashWithSalt(String textToBeHashed) {
+        String salt = "&#@";
+        return generateMD5Hash(textToBeHashed.concat(salt));
+    }
+
+    //SHA-1 has generation
+    //http://stackoverflow.com/questions/5757024/make-sha1-encryption-on-android
+    public static String generateSHA1Hash(String textToBeHashed) {
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance(SHA1);
+            messageDigest.update(textToBeHashed.getBytes());
+            byte[] sha1hash = messageDigest.digest();
+            return getHexString(sha1hash);
+        } catch (Exception e) {
+            throw new RuntimeException("Couldn't generate SHA-1 hash for " + textToBeHashed);
+        }
+    }
+
+    public static String generateSHA256Hash(String textToBeHashed) {
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance(SHA_256);
+            messageDigest.update(textToBeHashed.getBytes());
+            byte[] sha256Hash = messageDigest.digest();
+            return getHexString(sha256Hash);
+        } catch (Exception e) {
+            throw new RuntimeException("Couldn't generate SHA-256 has for " + textToBeHashed);
+        }
+    }
+
+    private static String getHexString(byte[] data) {
+        StringBuffer stringBuffer = new StringBuffer();
+        for (int i = 0; i < data.length; i++) {
+            stringBuffer.append(
+                    Integer.toString((data[i] & 0xff) + 0x100, 16).substring(1));
+        }
+        return stringBuffer.toString();
+    }
+
+    public static String getBase64String(byte[] bytes) {
+        return Base64.encodeToString(bytes, Base64.CRLF).replace(CARRIAGE_RETURN, EMPTY_STRING);
     }
 
 }

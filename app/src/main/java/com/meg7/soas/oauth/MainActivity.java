@@ -19,6 +19,10 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if(true){
+            goToTestActivity();
+            return;
+        }
         if (savedInstanceState != null && savedInstanceState.containsKey(CURRENT_FRAG)) {
             setCurrentFragment(savedInstanceState.getInt(CURRENT_FRAG, FRAG_SPLASH));
             return;

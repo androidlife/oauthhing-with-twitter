@@ -28,7 +28,14 @@ public class TestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test);
 //        requestTokenGeneration();
 //        stringParseTest();
-        postStatusTest();
+//        postStatusTest();
+        hashTest("Hello");
+    }
+
+    private void hashTest(String value) {
+        Timber.d("MD5 hash of %s = %s", value, OAuthHelper.generateMD5Hash(value));
+        Timber.d("SHA1 hash of  %s = %s", value, OAuthHelper.generateSHA1Hash(value));
+        Timber.d("SHA256 hash of  %s = %s", value, OAuthHelper.generateSHA256Hash(value));
     }
 
     String accToken = "34595673-GFl1Rtut7Ogi1mLRClxM3teBWHnytyauAzp3oMjva";
