@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">OauthTweet</string>
+    <string name="user_isn_t_logged_in_please_login_to_continue">User isn\'t logged in .Please login to continue</string>
 </resources>
