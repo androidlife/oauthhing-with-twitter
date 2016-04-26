@@ -64,6 +64,41 @@ public class DataManager {
         });
     }
 
+
+    public void getRequestToken(final DataCallbackMain<Token> dataCallback) {
+        String authorizationHeader = OAuthHelper.generateRequestTokenHeader(ApiEndPoints.TWITTER_CONSUMER_KEY,
+                ApiEndPoints.TWITTER_CONSUMER_SECRET, ApiEndPoints.CALLBACK_URL);
+        RetrofitManager.getApiService().getRequestToken(authorizationHeader).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response != null && response.body() != null) {
+                    try {
+                        String requestResponse = response.body().string();
+                        Timber.d("Request token Response = %s", requestResponse);
+                        String requestToken = OAuthHelper.extract(requestResponse, OAuthHelper.TOKEN_REGEX);
+                        String requestTokenSecret = OAuthHelper.extract(requestResponse, OAuthHelper.SECRET_REGEX);
+                        Timber.d("Request Token = %s ", requestToken);
+                        Timber.d("Request token secret = %s ", requestTokenSecret);
+                        dataCallback.onResponse(new Token(requestToken, requestTokenSecret));
+                        return;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                Timber.e("There was error fetching request token");
+                dataCallback.onFailure("There was error fetching request token");
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Timber.e("There was error fetching request token");
+                dataCallback.onFailure("There was error fetching request token");
+            }
+        });
+    }
+
+
     public void getAccessToken(final DataCallback<Token> dataCallback, String authorizationHeader) {
         RetrofitManager.getApiService().getAccessToken(authorizationHeader).enqueue(new Callback<ResponseBody>() {
             @Override
@@ -76,7 +111,7 @@ public class DataManager {
                         String requestTokenSecret = OAuthHelper.extract(requestResponse, OAuthHelper.SECRET_REGEX);
                         Timber.d("Access Token = %s ", requestToken);
                         Timber.d("Access token secret = %s ", requestTokenSecret);
-                        dataCallback.onResponse(new Token(requestToken, requestTokenSecret,requestResponse));
+                        dataCallback.onResponse(new Token(requestToken, requestTokenSecret, requestResponse));
                         return;
                     } catch (IOException e) {
                         e.printStackTrace();
