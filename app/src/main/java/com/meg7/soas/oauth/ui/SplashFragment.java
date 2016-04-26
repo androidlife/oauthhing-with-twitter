@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 
+import com.meg7.soas.oauth.MainActivity;
 import com.meg7.soas.oauth.R;
 import com.meg7.soas.oauth.ui.base.BaseFragment;
 
@@ -15,13 +16,17 @@ public class SplashFragment extends BaseFragment {
         return R.layout.frag_splash;
     }
 
+    @Override
+    protected String getLogTag() {
+        return "SplashFragment: ";
+    }
+
     public SplashFragment() {
 
     }
 
     private void navigateToMain() {
-        if (context != null && context instanceof FragmentCallback)
-            ((FragmentCallback) context).navigateToMain();
+        changeFragment(MainActivity.FRAG_FEED);
     }
 
     @Override

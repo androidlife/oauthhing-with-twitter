@@ -1,6 +1,7 @@
 package com.meg7.soas.oauth;
 
 import android.app.Application;
+import android.content.Context;
 
 import timber.log.Timber;
 
@@ -12,5 +13,12 @@ public class OauthApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Timber.plant(new Timber.DebugTree());
+        context = this;
+    }
+
+    private static Context context;
+
+    public static Context getContext() {
+        return context;
     }
 }
