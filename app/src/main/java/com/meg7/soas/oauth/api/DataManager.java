@@ -160,9 +160,15 @@ public class DataManager {
                         Timber.d("Access token Response = %s", requestAccessTokenResponse);
                         String accessToken = OAuthHelper.extract(requestAccessTokenResponse, OAuthHelper.TOKEN_REGEX);
                         String accessTokenSecret = OAuthHelper.extract(requestAccessTokenResponse, OAuthHelper.SECRET_REGEX);
+                        String userId = OAuthHelper.extract(requestAccessTokenResponse, OAuthHelper.USER_ID_REGEX);
+                        String screenName = OAuthHelper.extract(requestAccessTokenResponse, OAuthHelper.SCREEN_NAME_REGEX);
                         Timber.d("Access Token = %s ", accessToken);
                         Timber.d("Access token secret = %s ", accessTokenSecret);
-                        onResult(new Token(accessToken, accessTokenSecret, requestAccessTokenResponse));
+                        Timber.d("UserId = %s", userId);
+                        Timber.d("ScreenName = %s", screenName);
+                        Token token = new Token(accessToken, accessTokenSecret, requestAccessTokenResponse);
+                        token.setUserInfo(userId, screenName);
+                        onResult(token);
                         return;
                     } catch (IOException e) {
                         e.printStackTrace();

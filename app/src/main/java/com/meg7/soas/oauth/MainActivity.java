@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (false) {
+        if (true) {
             goToTestActivity();
             return;
         }

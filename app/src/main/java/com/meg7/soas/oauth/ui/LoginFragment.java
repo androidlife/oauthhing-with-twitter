@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import com.meg7.soas.oauth.PrefManager;
 import com.meg7.soas.oauth.R;
 import com.meg7.soas.oauth.api.ApiEndPoints;
 import com.meg7.soas.oauth.api.DataCallback;
@@ -55,6 +57,7 @@ public class LoginFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         setStatusBarColor(R.color.colorPrimaryDark);
         setToolbar(toolbar);
+        firstFetchRequestToken();
     }
 
     private void firstFetchRequestToken() {
@@ -64,7 +67,7 @@ public class LoginFragment extends BaseFragment {
     private DataCallbackMain<Token> requestTokenCallback = new DataCallbackMain<>(new DataCallback<Token>() {
         @Override
         public void onResponse(Token response) {
-
+            secondBeginUserAuthentication(response);
         }
 
         @Override
@@ -109,6 +112,7 @@ public class LoginFragment extends BaseFragment {
                     Uri uri = Uri.parse(url);
                     String oauthToken = uri.getQueryParameter("oauth_token");
                     String oauthVerifier = uri.getQueryParameter("oauth_verifier");
+
                     Timber.d("OAuth Token = %s", oauthToken);
                     Timber.d("OAuth Verifier = %s", oauthVerifier);
                     webView.stopLoading();
@@ -117,6 +121,8 @@ public class LoginFragment extends BaseFragment {
                 }
             }
         });
+
+        webView.loadUrl(authenticationUrl);
 
     }
 
@@ -145,6 +151,8 @@ public class LoginFragment extends BaseFragment {
 
     private void storeAccessToken(Token token) {
         //store it into shared preference
+        PrefManager.getInstance().addAuthToken(token.token, token.tokenSecret);
+        PrefManager.getInstance().storeUserInfo(token.userId, token.screenName);
         onBackPress();
     }
 
@@ -159,5 +167,11 @@ public class LoginFragment extends BaseFragment {
         super.onDestroyView();
         requestTokenCallback.cancel();
         accessTokenCallback.cancel();
+
+        if (true)
+            return;
+
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.removeSessionCookie();
     }
 }

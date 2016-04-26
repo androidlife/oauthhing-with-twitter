@@ -76,12 +76,12 @@ public class OAuthHelper {
      */
 
     //Follow OAuth specifications to know more about these value http://oauth.net/core/1.0/#encoding_parameters
-    public static final String HTTP_METHOD = "httpMethod", POST = "POST", URL = "url",
+    public static final String HTTP_METHOD = "httpMethod", POST = "POST", GET = "GET", URL = "url",
             OAUTH_CONSUMER_KEY = "oauth_consumer_key", OAUTH_NONCE = "oauth_nonce",
             OAUTH_SIGNATURE_METHOD = "oauth_signature_method", HMAC__SHA1 = "HMAC-SHA1",
             OAUTH_TIMESTAMP = "oauth_timestamp",
             OAUTH_VERSION = "oauth_version", VERSION_1 = "1.0", OAUTH = "OAuth ",
-            OAUTH_SIGNATURE = "oauth_signature", OAUTH_CALLBACK = "oauth_callback", OAUTH_TOKEN = "oauth_token", OAUTH_VERIFIER = "oauth_verifier";
+            OAUTH_SIGNATURE = "oauth_signature", OAUTH_CALLBACK = "oauth_callback", OAUTH_TOKEN = "oauth_token", OAUTH_VERIFIER = "oauth_verifier", SCREEN_NAME = "screen_name", USER_ID = "user_id";
 
     //http://oauth.googlecode.com/svn/code/javascript/example/signature.html
     //https://dev.twitter.com/oauth/overview/creating-signatures
@@ -168,6 +168,9 @@ public class OAuthHelper {
 
     public static final Pattern TOKEN_REGEX = Pattern.compile("oauth_token=([^&]+)");
     public static final Pattern SECRET_REGEX = Pattern.compile("oauth_token_secret=([^&]*)");
+    public static final Pattern USER_ID_REGEX = Pattern.compile("user_id=([^&]*)");
+    public static final Pattern SCREEN_NAME_REGEX = Pattern.compile("screen_name=([^&]*)");
+
 
     public static String extract(String response, Pattern p) {
         Matcher matcher = p.matcher(response);
@@ -234,6 +237,33 @@ public class OAuthHelper {
 
         String signatureBaseString = generateBaseString(httpMethod, postUrl, params);
         //signatureBaseString ="POST&https%3A%2F%2Fapi.twitter.com%2F1%2Fstatuses%2Fupdate.json&include_entities%3Dtrue%26oauth_consumer_key%3Dxvz1evFS4wEEPTGEFPHBog%26oauth_nonce%3DkYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1318622958%26oauth_token%3D370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb%26oauth_version%3D1.0%26status%3DHello%2520Ladies%2520%252B%2520Gentlemen%252C%2520a%2520signed%2520OAuth%2520request%2521";
+        Timber.d("SignatureBaseString = %s", signatureBaseString);
+        String signatureString = generateHMACSignature(signatureBaseString, consumerSecret, accessToken.tokenSecret);
+        Timber.d("SignatureString = %s", signatureString);
+        params.add(new Parameter(OAUTH_SIGNATURE, signatureString));
+        return generateHeaderString(params);
+
+    }
+
+
+    public static String generateUserInfoHeaderString(Token accessToken, String consumerKey, String consumerSecret, String userId, String screenName) {
+        ArrayList<Parameter> params = new ArrayList<>();
+        String httpMethod = GET;
+        String getUrl = encode(ApiEndPoints.TWITTER_GET_USER_INFO);
+
+        //params.add(new Parameter(INCLUDE_ENTITIES, "true"));
+        params.add(new Parameter(OAUTH_CONSUMER_KEY, consumerKey));
+        String[] timeStampNNonce = getTimeStampNNonce();
+        params.add(new Parameter(OAUTH_NONCE, timeStampNNonce[1]));
+        params.add(new Parameter(OAUTH_SIGNATURE_METHOD, HMAC__SHA1));
+        params.add(new Parameter(OAUTH_TIMESTAMP, timeStampNNonce[0]));
+        params.add(new Parameter(OAUTH_TOKEN, accessToken.token));
+        params.add(new Parameter(OAUTH_VERSION, VERSION_1));
+        params.add(new Parameter(SCREEN_NAME, screenName));
+        params.add(new Parameter(USER_ID, userId));
+
+
+        String signatureBaseString = generateBaseString(httpMethod, getUrl, params);
         Timber.d("SignatureBaseString = %s", signatureBaseString);
         String signatureString = generateHMACSignature(signatureBaseString, consumerSecret, accessToken.tokenSecret);
         Timber.d("SignatureString = %s", signatureString);

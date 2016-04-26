@@ -15,6 +15,8 @@ public class PrefManager {
     private static final String AUTH_TOKEN = "authToken";
     private static final String REFRESH_TOKEN = "refreshToken";
     private static final String AUTH_TOKEN_SECRET = "authTokenSecret";
+    private static final String USER_ID = "userId";
+    private static final String SCREEN_NAME = "screenName";
 
     private static final String SHARED_PREF_NAME = "OAuth";
 
@@ -32,6 +34,13 @@ public class PrefManager {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(AUTH_TOKEN, authToken);
         editor.putString(AUTH_TOKEN_SECRET, authTokenSecret);
+        editor.apply();
+    }
+
+    public void storeUserInfo(String userId, String screenName) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(USER_ID, userId);
+        editor.putString(SCREEN_NAME, screenName);
         editor.apply();
     }
 

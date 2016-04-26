@@ -29,8 +29,10 @@ public class TestActivity extends AppCompatActivity {
 //        requestTokenGeneration();
 //        stringParseTest();
 //        postStatusTest();
-        hashTest("Hello");
+        //hashTest("Hello");
+        getHomeTimeLineTest();
     }
+
 
     private void hashTest(String value) {
         Timber.d("MD5 hash of %s = %s", value, OAuthHelper.generateMD5Hash(value));
@@ -40,6 +42,8 @@ public class TestActivity extends AppCompatActivity {
 
     String accToken = "34595673-GFl1Rtut7Ogi1mLRClxM3teBWHnytyauAzp3oMjva";
     String accTokenSecret = "5n9lrFtNKmPqpxwpzIX5x3Q541JrF0PLICqW5mPAbqPbC";
+    String userId = "34595673";
+    String screenName = "laaptu9";
 
     private void postStatusTest() {
         Token accessToken = new Token(accToken, accTokenSecret);
@@ -71,6 +75,12 @@ public class TestActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    private void getHomeTimeLineTest() {
+        String header = OAuthHelper.generateUserInfoHeaderString(new Token(accToken, accTokenSecret), ApiEndPoints.TWITTER_CONSUMER_KEY, ApiEndPoints.TWITTER_CONSUMER_SECRET, userId, screenName);
+        Timber.d("Authorization Header = %s",header);
 
     }
 
