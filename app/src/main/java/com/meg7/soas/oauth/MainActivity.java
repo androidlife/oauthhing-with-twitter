@@ -65,6 +65,12 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     }
 
     @Override
+    public void onBackPressed() {
+        --currentFrag;
+        super.onBackPressed();
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(CURRENT_FRAG, currentFrag);

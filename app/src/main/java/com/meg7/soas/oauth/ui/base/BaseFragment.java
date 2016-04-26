@@ -115,10 +115,12 @@ public abstract class BaseFragment extends Fragment {
 
     private void nullifyContext() {
         this.context = null;
+        fragmentCallback = null;
     }
 
 
     public void changeFragment(int fragment) {
+        Timber.d("ChangeFragment, is callback null =%b", fragmentCallback == null);
         if (fragmentCallback != null)
             fragmentCallback.changeFragment(fragment);
 
@@ -129,10 +131,10 @@ public abstract class BaseFragment extends Fragment {
             fragmentCallback.setToolbar(toolbar);
     }
 
-    public void setStatusBarColor(int color){
-        if(fragmentCallback !=null)
+    public void setStatusBarColor(int color) {
+        if (fragmentCallback != null)
             fragmentCallback.setStatusBarColor(color);
     }
 
-    
+
 }
