@@ -3,14 +3,18 @@ package com.meg7.soas.oauth;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Window;
+import android.widget.FrameLayout;
 
 import com.meg7.soas.oauth.ui.FeedFragment;
 import com.meg7.soas.oauth.ui.FragmentCallback;
 import com.meg7.soas.oauth.ui.LoginFragment;
 import com.meg7.soas.oauth.ui.SplashFragment;
+
+import butterknife.Bind;
 
 
 public class MainActivity extends AppCompatActivity implements FragmentCallback {
@@ -19,6 +23,9 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     public static final int FRAG_SPLASH = 0x1, FRAG_FEED = 0x2, FRAG_TWEET_POST = 0x3, FRAG_LOGIN = 0x4;
     private int currentFrag = 0;
     private final String CURRENT_FRAG = "currentFrag";
+
+    @Bind(R.id.container)
+    FrameLayout container;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +106,17 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     public void setStatusBarColor(int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
-            window.setStatusBarColor(getResources().getColor(color,null));
+            window.setStatusBarColor(getResources().getColor(color, null));
         }
+    }
+
+    @Override
+    public void showMessage(String message) {
+        Snackbar.make(container, message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onBackPress() {
+        onBackPressed();
     }
 }

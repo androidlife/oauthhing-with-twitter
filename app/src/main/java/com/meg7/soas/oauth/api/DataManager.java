@@ -69,6 +69,16 @@ public class DataManager {
         String authorizationHeader = OAuthHelper.generateRequestTokenHeader(ApiEndPoints.TWITTER_CONSUMER_KEY,
                 ApiEndPoints.TWITTER_CONSUMER_SECRET, ApiEndPoints.CALLBACK_URL);
         RetrofitManager.getApiService().getRequestToken(authorizationHeader).enqueue(new Callback<ResponseBody>() {
+
+            private void onResult(Token token) {
+                if (token == null) {
+                    Timber.e("There was error fetching request token");
+                    dataCallback.onFailure("There was error fetching request token");
+                } else {
+                    dataCallback.onResponse(token);
+                }
+            }
+
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response != null && response.body() != null) {
@@ -79,21 +89,20 @@ public class DataManager {
                         String requestTokenSecret = OAuthHelper.extract(requestResponse, OAuthHelper.SECRET_REGEX);
                         Timber.d("Request Token = %s ", requestToken);
                         Timber.d("Request token secret = %s ", requestTokenSecret);
-                        dataCallback.onResponse(new Token(requestToken, requestTokenSecret));
+                        onResult(new Token(requestToken, requestTokenSecret));
                         return;
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    onResult(null);
 
                 }
-                Timber.e("There was error fetching request token");
-                dataCallback.onFailure("There was error fetching request token");
+
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Timber.e("There was error fetching request token");
-                dataCallback.onFailure("There was error fetching request token");
+                onResult(null);
             }
         });
     }
@@ -124,6 +133,48 @@ public class DataManager {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Timber.e("There was error fetching access token");
+            }
+        });
+
+    }
+
+
+    public void getAccessToken(final DataCallbackMain<Token> dataCallback, Token requestToken, String oauthVerifier) {
+        String authorizationHeader = OAuthHelper.generateAccessToken(requestToken, oauthVerifier, ApiEndPoints.TWITTER_CONSUMER_KEY, ApiEndPoints.TWITTER_CONSUMER_SECRET);
+        RetrofitManager.getApiService().getAccessToken(authorizationHeader).enqueue(new Callback<ResponseBody>() {
+
+            public void onResult(Token token) {
+                if (token == null) {
+                    Timber.e("There was error fetching access token");
+                    dataCallback.onFailure("There was error fetching access token");
+                } else {
+                    dataCallback.onResponse(token);
+                }
+            }
+
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response != null && response.body() != null) {
+                    try {
+                        String requestAccessTokenResponse = response.body().string();
+                        Timber.d("Access token Response = %s", requestAccessTokenResponse);
+                        String accessToken = OAuthHelper.extract(requestAccessTokenResponse, OAuthHelper.TOKEN_REGEX);
+                        String accessTokenSecret = OAuthHelper.extract(requestAccessTokenResponse, OAuthHelper.SECRET_REGEX);
+                        Timber.d("Access Token = %s ", accessToken);
+                        Timber.d("Access token secret = %s ", accessTokenSecret);
+                        onResult(new Token(accessToken, accessTokenSecret, requestAccessTokenResponse));
+                        return;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                onResult(null);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                onResult(null);
             }
         });
 

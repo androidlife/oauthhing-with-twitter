@@ -136,5 +136,16 @@ public abstract class BaseFragment extends Fragment {
             fragmentCallback.setStatusBarColor(color);
     }
 
+    public void showMessage(String message) {
+        if (fragmentCallback != null) {
+            fragmentCallback.showMessage(message);
+        }
+    }
+
+    public void onBackPress() {
+        if (fragmentCallback != null)
+            fragmentCallback.onBackPress();
+    }
+
 
 }
