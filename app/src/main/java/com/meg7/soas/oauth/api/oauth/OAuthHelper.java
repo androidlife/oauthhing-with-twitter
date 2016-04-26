@@ -260,7 +260,7 @@ public class OAuthHelper {
         params.add(new Parameter(OAUTH_TOKEN, accessToken.token));
         params.add(new Parameter(OAUTH_VERSION, VERSION_1));
         params.add(new Parameter(SCREEN_NAME, screenName));
-        params.add(new Parameter(USER_ID, userId));
+
 
 
         String signatureBaseString = generateBaseString(httpMethod, getUrl, params);

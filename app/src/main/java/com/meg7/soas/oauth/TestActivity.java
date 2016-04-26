@@ -11,6 +11,7 @@ import com.meg7.soas.oauth.api.DataManager;
 import com.meg7.soas.oauth.api.networklibs.RetrofitManager;
 import com.meg7.soas.oauth.api.oauth.OAuthHelper;
 import com.meg7.soas.oauth.api.oauth.Token;
+import com.meg7.soas.oauth.model.UserInfo;
 
 import java.io.IOException;
 
@@ -80,7 +81,48 @@ public class TestActivity extends AppCompatActivity {
 
     private void getHomeTimeLineTest() {
         String header = OAuthHelper.generateUserInfoHeaderString(new Token(accToken, accTokenSecret), ApiEndPoints.TWITTER_CONSUMER_KEY, ApiEndPoints.TWITTER_CONSUMER_SECRET, userId, screenName);
-        Timber.d("Authorization Header = %s",header);
+        Timber.d("Authorization Header = %s", header);
+//        RetrofitManager.getApiService().getUserInfo(header, screenName).enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                if (response != null && response.body() != null) {
+//                    try {
+//                        String responseString = response.body().string();
+//                        Timber.d("Response String = %s", responseString);
+//                        return;
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                Timber.e("Error getting user info");
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                Timber.e("Error getting User Info");
+//            }
+//        });
+
+        RetrofitManager.getApiService().getUserInfos(header, screenName).enqueue(new Callback<UserInfo>() {
+            @Override
+            public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
+                if (response != null && response.body() != null) {
+                    try {
+                        UserInfo userInfo = response.body();
+                        Timber.d("Response String = %s", userInfo.fullName);
+                        return;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                Timber.e("Error getting user info");
+            }
+
+            @Override
+            public void onFailure(Call<UserInfo> call, Throwable t) {
+                Timber.e("Error getting User Info");
+            }
+        });
 
     }
 

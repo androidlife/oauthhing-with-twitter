@@ -31,6 +31,6 @@ public class ApiEndPoints {
     //API for posting data
     public static final String TWEET_POST_URL = "https://api.twitter.com/1.1/statuses/update.json";
     //API for getting user info
-    public static final String TWITTER_GET_USER_INFO = "https://api.twitter.com/1.1/users/show.json?screen_name=laaptu9";
+    public static final String TWITTER_GET_USER_INFO = "https://api.twitter.com/1.1/users/show.json";
 
 }
