@@ -48,4 +48,11 @@ public interface ApiService {
             @Query("screen_name") String screenName
     );
 
+    @GET(ApiEndPoints.TWITTER_GET_USER_TIMELINE)
+    Call<ResponseBody> getUserTimeline(
+            @Header("Authorization") String authorization,
+            @Query("screen_name") String screenName,
+            @Query("count") int totalTweets
+    );
+
 }

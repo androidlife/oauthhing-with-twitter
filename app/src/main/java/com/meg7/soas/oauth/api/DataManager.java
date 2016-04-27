@@ -185,4 +185,8 @@ public class DataManager {
         });
 
     }
+
+    public void getUserTimeline(final DataCallbackMain<ResponseBody> dataCallbackMain, Token accessToken, String screenName, int totalTweets) {
+
+    }
 }

@@ -32,5 +32,7 @@ public class ApiEndPoints {
     public static final String TWEET_POST_URL = "https://api.twitter.com/1.1/statuses/update.json";
     //API for getting user info
     public static final String TWITTER_GET_USER_INFO = "https://api.twitter.com/1.1/users/show.json";
+    //API for getting user timeline
+    public static final String TWITTER_GET_USER_TIMELINE = "https://api.twitter.com/1.1/statuses/user_timeline.json";
 
 }

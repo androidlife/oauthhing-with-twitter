@@ -81,7 +81,9 @@ public class OAuthHelper {
             OAUTH_SIGNATURE_METHOD = "oauth_signature_method", HMAC__SHA1 = "HMAC-SHA1",
             OAUTH_TIMESTAMP = "oauth_timestamp",
             OAUTH_VERSION = "oauth_version", VERSION_1 = "1.0", OAUTH = "OAuth ",
-            OAUTH_SIGNATURE = "oauth_signature", OAUTH_CALLBACK = "oauth_callback", OAUTH_TOKEN = "oauth_token", OAUTH_VERIFIER = "oauth_verifier", SCREEN_NAME = "screen_name", USER_ID = "user_id";
+            OAUTH_SIGNATURE = "oauth_signature", OAUTH_CALLBACK = "oauth_callback",
+            OAUTH_TOKEN = "oauth_token", OAUTH_VERIFIER = "oauth_verifier", SCREEN_NAME = "screen_name",
+            USER_ID = "user_id", COUNT = "count";
 
     //http://oauth.googlecode.com/svn/code/javascript/example/signature.html
     //https://dev.twitter.com/oauth/overview/creating-signatures
@@ -261,6 +263,31 @@ public class OAuthHelper {
         params.add(new Parameter(OAUTH_VERSION, VERSION_1));
         params.add(new Parameter(SCREEN_NAME, screenName));
 
+
+        String signatureBaseString = generateBaseString(httpMethod, getUrl, params);
+        Timber.d("SignatureBaseString = %s", signatureBaseString);
+        String signatureString = generateHMACSignature(signatureBaseString, consumerSecret, accessToken.tokenSecret);
+        Timber.d("SignatureString = %s", signatureString);
+        params.add(new Parameter(OAUTH_SIGNATURE, signatureString));
+        return generateHeaderString(params);
+
+    }
+
+    public static String generateUserTimelineHeaderString(Token accessToken, String consumerKey, String consumerSecret,
+                                                          String screenName, int totalTweets) {
+        ArrayList<Parameter> params = new ArrayList<>();
+        String httpMethod = GET;
+        String getUrl = encode(ApiEndPoints.TWITTER_GET_USER_TIMELINE);
+
+        params.add(new Parameter(COUNT, String.valueOf(totalTweets)));
+        params.add(new Parameter(OAUTH_CONSUMER_KEY, consumerKey));
+        String[] timeStampNNonce = getTimeStampNNonce();
+        params.add(new Parameter(OAUTH_NONCE, timeStampNNonce[1]));
+        params.add(new Parameter(OAUTH_SIGNATURE_METHOD, HMAC__SHA1));
+        params.add(new Parameter(OAUTH_TIMESTAMP, timeStampNNonce[0]));
+        params.add(new Parameter(OAUTH_TOKEN, accessToken.token));
+        params.add(new Parameter(OAUTH_VERSION, VERSION_1));
+        params.add(new Parameter(SCREEN_NAME, screenName));
 
 
         String signatureBaseString = generateBaseString(httpMethod, getUrl, params);

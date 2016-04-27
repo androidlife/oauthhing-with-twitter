@@ -1,6 +1,7 @@
 package com.meg7.soas.oauth.api.gson;
 
 import com.google.gson.TypeAdapter;
+import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.meg7.soas.oauth.model.UserInfo;
@@ -16,6 +17,13 @@ public class UserInfoAdapter extends TypeAdapter<UserInfo> {
     @Override
     public void write(JsonWriter out, UserInfo value) throws IOException {
 
+    }
+
+
+    private static final TypeToken<UserInfo> USER_INFO_TYPE_TOKEN = TypeToken.get(UserInfo.class);
+
+    public static boolean adapts(TypeToken<?> type) {
+        return USER_INFO_TYPE_TOKEN.equals(type);
     }
 
     @Override

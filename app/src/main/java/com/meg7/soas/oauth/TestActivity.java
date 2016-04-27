@@ -31,7 +31,8 @@ public class TestActivity extends AppCompatActivity {
 //        stringParseTest();
 //        postStatusTest();
         //hashTest("Hello");
-        getHomeTimeLineTest();
+//        getUserInfoTest();
+        getUserHomeTimelineTest();
     }
 
 
@@ -79,7 +80,34 @@ public class TestActivity extends AppCompatActivity {
 
     }
 
-    private void getHomeTimeLineTest() {
+    private void getUserHomeTimelineTest() {
+        String header = OAuthHelper.generateUserTimelineHeaderString(new Token(accToken, accTokenSecret),
+                ApiEndPoints.TWITTER_CONSUMER_KEY, ApiEndPoints.TWITTER_CONSUMER_SECRET, screenName, 10);
+        Timber.d("Authorization header = %s", header);
+        RetrofitManager.getApiService().getUserTimeline(header, screenName, 10).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response != null && response.body() != null) {
+                    try {
+                        String responseString = response.body().string();
+                        Timber.d("User timeline string = %s", responseString);
+                        return;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Timber.d("Unable to fetch the user timeline");
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Timber.d("Unable to fetch the user timeline");
+            }
+        });
+    }
+
+    private void getUserInfoTest() {
         String header = OAuthHelper.generateUserInfoHeaderString(new Token(accToken, accTokenSecret), ApiEndPoints.TWITTER_CONSUMER_KEY, ApiEndPoints.TWITTER_CONSUMER_SECRET, userId, screenName);
         Timber.d("Authorization Header = %s", header);
 //        RetrofitManager.getApiService().getUserInfo(header, screenName).enqueue(new Callback<ResponseBody>() {
