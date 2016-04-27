@@ -50,6 +50,19 @@ public class UserTimeLineTweetAdapter extends TypeAdapter<ArrayList<Tweet>> {
                         case "text":
                             tweet.text = in.nextString();
                             break;
+                        case "user":
+                            in.beginObject();
+                            while (in.hasNext()) {
+                                switch (in.nextName()) {
+                                    case "profile_image_url":
+                                        tweet.imageUrl = in.nextString();
+                                        break;
+                                    default:
+                                        in.skipValue();
+                                }
+                            }
+                            in.endObject();
+                            break;
                         default:
                             in.skipValue();
                     }
