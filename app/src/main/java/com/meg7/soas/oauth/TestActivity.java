@@ -11,9 +11,11 @@ import com.meg7.soas.oauth.api.DataManager;
 import com.meg7.soas.oauth.api.networklibs.RetrofitManager;
 import com.meg7.soas.oauth.api.oauth.OAuthHelper;
 import com.meg7.soas.oauth.api.oauth.Token;
+import com.meg7.soas.oauth.model.Tweet;
 import com.meg7.soas.oauth.model.UserInfo;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -84,15 +86,18 @@ public class TestActivity extends AppCompatActivity {
         String header = OAuthHelper.generateUserTimelineHeaderString(new Token(accToken, accTokenSecret),
                 ApiEndPoints.TWITTER_CONSUMER_KEY, ApiEndPoints.TWITTER_CONSUMER_SECRET, screenName, 10);
         Timber.d("Authorization header = %s", header);
-        RetrofitManager.getApiService().getUserTimeline(header, screenName, 10).enqueue(new Callback<ResponseBody>() {
+        RetrofitManager.getApiService().getUserTimelines(header, screenName, 10).enqueue(new Callback<ArrayList<Tweet>>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<ArrayList<Tweet>> call, Response<ArrayList<Tweet>> response) {
                 if (response != null && response.body() != null) {
                     try {
-                        String responseString = response.body().string();
-                        Timber.d("User timeline string = %s", responseString);
-                        return;
-                    } catch (IOException e) {
+                        ArrayList<Tweet> tweets = response.body();
+                        if (tweets != null && tweets.size() > 0) {
+                            for (Tweet tweet : tweets)
+                                Timber.d("created at =%s", tweet.createdAt);
+                            return;
+                        }
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     Timber.d("Unable to fetch the user timeline");
@@ -101,7 +106,7 @@ public class TestActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<ArrayList<Tweet>> call, Throwable t) {
                 Timber.d("Unable to fetch the user timeline");
             }
         });

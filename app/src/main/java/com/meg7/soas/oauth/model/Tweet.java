@@ -5,7 +5,7 @@ package com.meg7.soas.oauth.model;
  */
 public class Tweet {
 
-    public String createdAt;
+    public String createdAt, text, imageUrl;
 
     public Tweet() {
 

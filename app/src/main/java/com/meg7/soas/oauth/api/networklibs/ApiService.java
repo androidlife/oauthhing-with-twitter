@@ -1,7 +1,10 @@
 package com.meg7.soas.oauth.api.networklibs;
 
 import com.meg7.soas.oauth.api.ApiEndPoints;
+import com.meg7.soas.oauth.model.Tweet;
 import com.meg7.soas.oauth.model.UserInfo;
+
+import java.util.ArrayList;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -50,6 +53,14 @@ public interface ApiService {
 
     @GET(ApiEndPoints.TWITTER_GET_USER_TIMELINE)
     Call<ResponseBody> getUserTimeline(
+            @Header("Authorization") String authorization,
+            @Query("screen_name") String screenName,
+            @Query("count") int totalTweets
+    );
+
+
+    @GET(ApiEndPoints.TWITTER_GET_USER_TIMELINE)
+    Call<ArrayList<Tweet>> getUserTimelines(
             @Header("Authorization") String authorization,
             @Query("screen_name") String screenName,
             @Query("count") int totalTweets
