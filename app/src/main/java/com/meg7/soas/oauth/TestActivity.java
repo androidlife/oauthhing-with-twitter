@@ -137,7 +137,7 @@ public class TestActivity extends AppCompatActivity {
     }
 
     private void getUserInfoTest() {
-        String header = OAuthHelper.generateUserInfoHeaderString(new Token(accToken, accTokenSecret), ApiEndPoints.TWITTER_CONSUMER_KEY, ApiEndPoints.TWITTER_CONSUMER_SECRET, userId, screenName);
+        String header = OAuthHelper.generateUserInfoHeaderString(new Token(accToken, accTokenSecret), ApiEndPoints.TWITTER_CONSUMER_KEY, ApiEndPoints.TWITTER_CONSUMER_SECRET,screenName);
         Timber.d("Authorization Header = %s", header);
 //        RetrofitManager.getApiService().getUserInfo(header, screenName).enqueue(new Callback<ResponseBody>() {
 //            @Override

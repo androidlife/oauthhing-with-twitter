@@ -248,7 +248,7 @@ public class OAuthHelper {
     }
 
 
-    public static String generateUserInfoHeaderString(Token accessToken, String consumerKey, String consumerSecret, String userId, String screenName) {
+    public static String generateUserInfoHeaderString(Token accessToken, String consumerKey, String consumerSecret,  String screenName) {
         ArrayList<Parameter> params = new ArrayList<>();
         String httpMethod = GET;
         String getUrl = encode(ApiEndPoints.TWITTER_GET_USER_INFO);

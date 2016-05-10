@@ -149,6 +149,18 @@ public class LoginFragment extends BaseFragment {
         }
     });
 
+    private DataCallbackMain<Token> accessTokenCallback1 = new DataCallbackMain<Token>(){
+        @Override
+        public void onResponse(Token response) {
+            super.onResponse(response);
+        }
+
+        @Override
+        public void onFailure(String error) {
+            super.onFailure(error);
+        }
+    };
+
     private void storeAccessToken(Token token) {
         //store it into shared preference
         PrefManager.getInstance().addAuthToken(token.token, token.tokenSecret);

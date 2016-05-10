@@ -10,7 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.meg7.soas.oauth.api.DataCallbackMain;
 import com.meg7.soas.oauth.ui.FragmentCallback;
+
+import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import timber.log.Timber;
@@ -26,6 +29,8 @@ public abstract class BaseFragment extends Fragment {
     public Context context;
 
     private FragmentCallback fragmentCallback;
+
+    private ArrayList<DataCallbackMain> dataCallbacks;
 
 
     @Override
@@ -48,6 +53,7 @@ public abstract class BaseFragment extends Fragment {
         Timber.tag(getLogTag()).d("onCreate() ");
     }
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -61,6 +67,15 @@ public abstract class BaseFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Timber.tag(getLogTag()).d("onActivityCreated()");
+        dataCallbacks = new ArrayList<>();
+    }
+
+    public void addDataCallback(DataCallbackMain dataCallbackMain) {
+        dataCallbacks.add(dataCallbackMain);
+    }
+
+    public void removeDataCallback(DataCallbackMain dataCallbackMain) {
+        dataCallbacks.remove(dataCallbackMain);
     }
 
     @Override
@@ -116,6 +131,16 @@ public abstract class BaseFragment extends Fragment {
     private void nullifyContext() {
         this.context = null;
         fragmentCallback = null;
+        clearAllDataCallbacks();
+    }
+
+    private void clearAllDataCallbacks() {
+        if (dataCallbacks != null && dataCallbacks.size() > 0) {
+            for (DataCallbackMain dataCallbackMain : dataCallbacks)
+                dataCallbackMain.cancel();
+            dataCallbacks.clear();
+        }
+        dataCallbacks = null;
     }
 
 
@@ -151,8 +176,6 @@ public abstract class BaseFragment extends Fragment {
         if (fragmentCallback != null)
             fragmentCallback.setToolbarTitle(title);
     }
-
-
 
 
 }

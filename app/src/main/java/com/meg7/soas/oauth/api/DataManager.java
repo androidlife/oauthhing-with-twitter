@@ -3,6 +3,7 @@ package com.meg7.soas.oauth.api;
 import com.meg7.soas.oauth.api.networklibs.RetrofitManager;
 import com.meg7.soas.oauth.api.oauth.OAuthHelper;
 import com.meg7.soas.oauth.api.oauth.Token;
+import com.meg7.soas.oauth.model.UserInfo;
 
 import java.io.IOException;
 
@@ -136,6 +137,45 @@ public class DataManager {
             }
         });
 
+    }
+
+
+    public void getUserInfo(final DataCallbackMain<UserInfo> dataCallbackMain, Token token, String screenName) {
+        String header = OAuthHelper.generateUserInfoHeaderString(new Token(token.token, token.tokenSecret), ApiEndPoints.TWITTER_CONSUMER_KEY, ApiEndPoints.TWITTER_CONSUMER_SECRET, screenName);
+        Timber.d("Authorization Header = %s", header);
+        RetrofitManager.getApiService().getUserInfos(header, screenName).enqueue(new Callback<UserInfo>() {
+            @Override
+            public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
+                if (response != null && response.body() != null) {
+                    try {
+                        UserInfo userInfo = response.body();
+                        onResult(userInfo);
+                        return;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                onResult(null);
+
+
+            }
+
+            @Override
+            public void onFailure(Call<UserInfo> call, Throwable t) {
+                onResult(null);
+            }
+
+            public void onResult(UserInfo userInfo) {
+                if (userInfo == null) {
+                    Timber.e("Error getting user info");
+                    dataCallbackMain.onFailure("Error getting user info");
+                } else {
+                    Timber.d("Response String = %s", userInfo.fullName);
+                    dataCallbackMain.onResponse(userInfo);
+                }
+
+            }
+        });
     }
 
 

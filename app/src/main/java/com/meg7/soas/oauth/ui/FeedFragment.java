@@ -87,18 +87,20 @@ public class FeedFragment extends BaseFragment {
         fab.setImageDrawable(context.getDrawable(R.drawable.ic_post_tweet));
         swipeRefreshLayout.setEnabled(false);
         swipeRefreshLayout.setRefreshing(true);
-        if (PrefManager.getInstance().getUserScreenName() == null) {
-            // go and fetch the user info from server
-            //DataManager.getInstance().
-
+        setToolbarTitle(PrefManager.getInstance().getUserScreenName());
+        if (PrefManager.getInstance().getUserProfileImage() == null) {
+            fetchUserInfo();
         } else {
             addTitleNImageToToolbar();
         }
     }
 
     private void addTitleNImageToToolbar() {
-        setToolbarTitle(PrefManager.getInstance().getUserScreenName());
         GlideConfigurator.loadCircularImage(context, PrefManager.getInstance().getUserProfileImage(), R.color.colorPrimary);
+    }
+
+    private void fetchUserInfo() {
+
     }
 
     private void initEmptyList() {
