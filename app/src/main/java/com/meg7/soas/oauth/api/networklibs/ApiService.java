@@ -37,6 +37,13 @@ public interface ApiService {
             @Field("include_entities") boolean include
     );
 
+    @FormUrlEncoded
+    @POST("https://qa.thamelremit.lftechnology.com/api/login")
+    Call<ResponseBody> loginUser(
+            @Field("username") String username,
+            @Field("password") String password
+    );
+
 
     @GET(ApiEndPoints.TWITTER_GET_USER_INFO)
     Call<ResponseBody> getUserInfo(

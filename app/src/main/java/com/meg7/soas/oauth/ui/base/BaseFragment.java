@@ -147,5 +147,12 @@ public abstract class BaseFragment extends Fragment {
             fragmentCallback.onBackPress();
     }
 
+    public void setToolbarTitle(String title) {
+        if (fragmentCallback != null)
+            fragmentCallback.setToolbarTitle(title);
+    }
+
+
+
 
 }

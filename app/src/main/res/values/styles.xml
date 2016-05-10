@@ -13,4 +13,18 @@
 
     <style name="AppTheme.Main" />
 
+
+    <style name="TextAppearanceMain" parent="@android:style/Widget.TextView">
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">serif-monospace</item>
+    </style>
+
+    <style name="TextAppearanceMain.Date">
+        <item name="android:textColor">@color/secondary_text</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
 </resources>

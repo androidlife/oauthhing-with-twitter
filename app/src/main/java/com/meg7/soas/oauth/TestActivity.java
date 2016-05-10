@@ -34,7 +34,31 @@ public class TestActivity extends AppCompatActivity {
 //        postStatusTest();
         //hashTest("Hello");
 //        getUserInfoTest();
-        getUserHomeTimelineTest();
+//        getUserHomeTimelineTest();
+        remitTest();
+    }
+
+    private void remitTest() {
+        RetrofitManager.getApiService().loginUser("santosh", "santosh").enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response != null && response.body() != null) {
+                    try {
+                        String responseString = response.body().string();
+                        Timber.d("MainResponse =%s", responseString);
+                        return;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Timber.d("OnFailure()");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Timber.d("OnFailure()");
+            }
+        });
     }
 
 

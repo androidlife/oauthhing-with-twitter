@@ -9,6 +9,9 @@ public interface FragmentCallback {
 
     void setToolbar(Toolbar toolbar);
 
+    void setToolbarTitle(String title);
+
+
     void setStatusBarColor(int color);
 
     void showMessage(String message);

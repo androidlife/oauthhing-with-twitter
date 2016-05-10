@@ -14,6 +14,8 @@ import android.view.View;
 import com.meg7.soas.oauth.MainActivity;
 import com.meg7.soas.oauth.PrefManager;
 import com.meg7.soas.oauth.R;
+import com.meg7.soas.oauth.api.DataManager;
+import com.meg7.soas.oauth.imageloaders.GlideConfigurator;
 import com.meg7.soas.oauth.model.Tweet;
 import com.meg7.soas.oauth.ui.base.BaseFragment;
 
@@ -37,6 +39,9 @@ public class FeedFragment extends BaseFragment {
 
     @Bind(R.id.tweet_list)
     RecyclerView recyclerView;
+
+    @Bind(R.id.image)
+    SquaredImageView profileImage;
 
     LinearLayoutManager linearLayoutManager;
 
@@ -74,8 +79,26 @@ public class FeedFragment extends BaseFragment {
         if (loginState == LoginState.NotLogged)
             initEmptyList();
         else {
-
+            initUserList();
         }
+    }
+
+    private void initUserList() {
+        fab.setImageDrawable(context.getDrawable(R.drawable.ic_post_tweet));
+        swipeRefreshLayout.setEnabled(false);
+        swipeRefreshLayout.setRefreshing(true);
+        if (PrefManager.getInstance().getUserScreenName() == null) {
+            // go and fetch the user info from server
+            //DataManager.getInstance().
+
+        } else {
+            addTitleNImageToToolbar();
+        }
+    }
+
+    private void addTitleNImageToToolbar() {
+        setToolbarTitle(PrefManager.getInstance().getUserScreenName());
+        GlideConfigurator.loadCircularImage(context, PrefManager.getInstance().getUserProfileImage(), R.color.colorPrimary);
     }
 
     private void initEmptyList() {

@@ -13,6 +13,7 @@ import com.meg7.soas.oauth.ui.FeedFragment;
 import com.meg7.soas.oauth.ui.FragmentCallback;
 import com.meg7.soas.oauth.ui.LoginFragment;
 import com.meg7.soas.oauth.ui.SplashFragment;
+import com.meg7.soas.oauth.ui.TweetPostFragment;
 
 import butterknife.Bind;
 
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
             setCurrentFragment(savedInstanceState.getInt(CURRENT_FRAG, FRAG_SPLASH));
             return;
         }
-        setCurrentFragment(FRAG_FEED);
+        setCurrentFragment(FRAG_TWEET_POST);
     }
 
     private void setCurrentFragment(int currentFrag) {
@@ -66,6 +67,14 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
                         .replace(R.id.container, new LoginFragment(), tag)
                         .addToBackStack(tag).commit();
                 getSupportFragmentManager().executePendingTransactions();
+                break;
+            case FRAG_TWEET_POST:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, new TweetPostFragment(), tag)
+                        .addToBackStack(tag)
+                        .commit();
+                getSupportFragmentManager().executePendingTransactions();
+                break;
             default:
                 break;
         }
@@ -103,12 +112,19 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     }
 
     @Override
+    public void setToolbarTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
+
+    @Override
     public void setStatusBarColor(int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.setStatusBarColor(getResources().getColor(color, null));
         }
     }
+
+
 
     @Override
     public void showMessage(String message) {

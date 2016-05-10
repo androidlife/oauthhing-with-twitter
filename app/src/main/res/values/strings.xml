@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">OauthTweet</string>
     <string name="user_isn_t_logged_in_please_login_to_continue">User isn\'t logged in .Please login to continue</string>
+    <string name="write_tweet">Write a tweet (%1$d)</string>
 </resources>
