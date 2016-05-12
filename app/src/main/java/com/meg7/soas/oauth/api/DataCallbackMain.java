@@ -12,25 +12,20 @@ public class DataCallbackMain<T> implements DataCallback<T> {
         this.dataCallback = dataCallback;
     }
 
-    public DataCallbackMain() {
-
-    }
 
     @Override
     public void onResponse(T response) {
-//        if (!cancel)
-//            dataCallback.onResponse(response);
-        if (cancel)
-            return;
+        if (!cancel)
+            dataCallback.onResponse(response);
+
 
     }
 
     @Override
     public void onFailure(String error) {
-//        if (!cancel)
-//            dataCallback.onFailure(error);
-        if (cancel)
-            return;
+        if (!cancel)
+            dataCallback.onFailure(error);
+
     }
 
     @Override

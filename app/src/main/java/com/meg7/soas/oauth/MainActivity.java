@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (true) {
+        if (false) {
             goToTestActivity();
             return;
         }
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
             setCurrentFragment(savedInstanceState.getInt(CURRENT_FRAG, FRAG_SPLASH));
             return;
         }
-        setCurrentFragment(FRAG_TWEET_POST);
+        setCurrentFragment(FRAG_SPLASH);
     }
 
     private void setCurrentFragment(int currentFrag) {

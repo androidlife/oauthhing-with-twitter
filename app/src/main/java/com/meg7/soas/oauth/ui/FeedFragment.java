@@ -14,9 +14,13 @@ import android.view.View;
 import com.meg7.soas.oauth.MainActivity;
 import com.meg7.soas.oauth.PrefManager;
 import com.meg7.soas.oauth.R;
+import com.meg7.soas.oauth.api.DataCallback;
+import com.meg7.soas.oauth.api.DataCallbackMain;
 import com.meg7.soas.oauth.api.DataManager;
+import com.meg7.soas.oauth.api.oauth.Token;
 import com.meg7.soas.oauth.imageloaders.GlideConfigurator;
 import com.meg7.soas.oauth.model.Tweet;
+import com.meg7.soas.oauth.model.UserInfo;
 import com.meg7.soas.oauth.ui.base.BaseFragment;
 
 import java.util.ArrayList;
@@ -81,27 +85,102 @@ public class FeedFragment extends BaseFragment {
         else {
             initUserList();
         }
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initUserList();
+            }
+        });
     }
 
     private void initUserList() {
         fab.setImageDrawable(context.getDrawable(R.drawable.ic_post_tweet));
         swipeRefreshLayout.setEnabled(false);
-        swipeRefreshLayout.setRefreshing(true);
+
         setToolbarTitle(PrefManager.getInstance().getUserScreenName());
         if (PrefManager.getInstance().getUserProfileImage() == null) {
             fetchUserInfo();
         } else {
             addTitleNImageToToolbar();
         }
+        if (tweets.size() == 0) {
+            fetchUserHomeLineTweets();
+        } else {
+            populateTweets();
+        }
     }
+
+    private void fetchUserHomeLineTweets() {
+        swipeRefreshLayout.setRefreshing(true);
+        addDataCallback(userHomeTimeLineDataCallback);
+        DataManager.getInstance().getUserHomeTimeLine(userHomeTimeLineDataCallback, PrefManager.getInstance().getAccessToken(),
+                PrefManager.getInstance().getUserScreenName(), 10);
+    }
+
+    private void populateTweets() {
+        swipeRefreshLayout.setRefreshing(false);
+        swipeRefreshLayout.setEnabled(true);
+        removeDataCallback(userHomeTimeLineDataCallback);
+        TweetListAdapter tweetListAdapter = new TweetListAdapter(tweets);
+        recyclerView.setAdapter(tweetListAdapter);
+    }
+
+    private DataCallbackMain<ArrayList<Tweet>> userHomeTimeLineDataCallback = new DataCallbackMain<>(new DataCallback<ArrayList<Tweet>>() {
+        @Override
+        public void onResponse(ArrayList<Tweet> response) {
+            tweets = new ArrayList<>(response);
+            populateTweets();
+        }
+
+        @Override
+        public void onFailure(String error) {
+            showMessage(error);
+            populateTweets();
+
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+    });
+
 
     private void addTitleNImageToToolbar() {
         GlideConfigurator.loadCircularImage(context, PrefManager.getInstance().getUserProfileImage(), R.color.colorPrimary);
     }
 
     private void fetchUserInfo() {
-
+        addDataCallback(userInfoDataCallback);
+        DataManager.getInstance().getUserInfo(userInfoDataCallback, PrefManager.getInstance().getAccessToken(),
+                PrefManager.getInstance().getUserScreenName());
     }
+
+    private void storeUserInfo(UserInfo userInfo) {
+        PrefManager.getInstance().storeUserProfileImages(userInfo.profileImageUrl, userInfo.backgroundImageUrl);
+        addTitleNImageToToolbar();
+    }
+
+    private DataCallbackMain<UserInfo> userInfoDataCallback = new DataCallbackMain<>(new DataCallback<UserInfo>() {
+        @Override
+        public void onResponse(UserInfo response) {
+            storeUserInfo(response);
+            removeDataCallback(userInfoDataCallback);
+        }
+
+        @Override
+        public void onFailure(String error) {
+            showMessage(error);
+            removeDataCallback(userInfoDataCallback);
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+    });
 
     private void initEmptyList() {
         //// TODO: 4/25/16  check for logged in or not

@@ -3,9 +3,11 @@ package com.meg7.soas.oauth.api;
 import com.meg7.soas.oauth.api.networklibs.RetrofitManager;
 import com.meg7.soas.oauth.api.oauth.OAuthHelper;
 import com.meg7.soas.oauth.api.oauth.Token;
+import com.meg7.soas.oauth.model.Tweet;
 import com.meg7.soas.oauth.model.UserInfo;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -141,7 +143,7 @@ public class DataManager {
 
 
     public void getUserInfo(final DataCallbackMain<UserInfo> dataCallbackMain, Token token, String screenName) {
-        String header = OAuthHelper.generateUserInfoHeaderString(new Token(token.token, token.tokenSecret), ApiEndPoints.TWITTER_CONSUMER_KEY, ApiEndPoints.TWITTER_CONSUMER_SECRET, screenName);
+        String header = OAuthHelper.generateUserInfoHeaderString(token, ApiEndPoints.TWITTER_CONSUMER_KEY, ApiEndPoints.TWITTER_CONSUMER_SECRET, screenName);
         Timber.d("Authorization Header = %s", header);
         RetrofitManager.getApiService().getUserInfos(header, screenName).enqueue(new Callback<UserInfo>() {
             @Override
@@ -176,6 +178,46 @@ public class DataManager {
 
             }
         });
+    }
+
+    public void getUserHomeTimeLine(final DataCallbackMain<ArrayList<Tweet>> dataCallbackMain, Token accessToken, String screenName, int tweetCount) {
+        String authorizationHeader = OAuthHelper.generateUserTimelineHeaderString(accessToken,
+                ApiEndPoints.TWITTER_CONSUMER_KEY, ApiEndPoints.TWITTER_CONSUMER_SECRET, screenName, tweetCount);
+        Timber.d("AuthorizationHeader = %s", authorizationHeader);
+        RetrofitManager.getApiService().getUserTimelines(authorizationHeader, screenName, tweetCount).enqueue(new Callback<ArrayList<Tweet>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Tweet>> call, Response<ArrayList<Tweet>> response) {
+                if (response != null && response.body() != null) {
+                    try {
+                        ArrayList<Tweet> tweets = response.body();
+                        if (tweets != null && tweets.size() > 0) {
+                            for (Tweet tweet : tweets)
+                                Timber.d("created at =%s", tweet.createdAt);
+                            onResult(tweets);
+                            return;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    onResult(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Tweet>> call, Throwable t) {
+                onResult(null);
+            }
+
+            public void onResult(ArrayList<Tweet> tweets) {
+                if (tweets == null) {
+                    Timber.d("Unable to fetch the user timeline");
+                    dataCallbackMain.onFailure("Unable to fetch the user timeline");
+                } else {
+                    dataCallbackMain.onResponse(tweets);
+                }
+            }
+        });
+
     }
 
 

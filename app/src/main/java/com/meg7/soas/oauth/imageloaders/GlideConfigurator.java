@@ -51,7 +51,6 @@ public class GlideConfigurator implements GlideModule {
     }
 
     public static BitmapRequestBuilder<String, Bitmap> loadCircularImage(Context context, String path, int borderColor) {
-
         return load(context, path).transform(new CircleTransformation(context, path, borderColor))
                 .placeholder(R.drawable.ic_noprofilepicture)
                 .error(R.drawable.ic_noprofilepicture);

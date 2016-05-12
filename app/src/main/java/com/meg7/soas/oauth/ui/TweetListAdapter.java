@@ -1,5 +1,6 @@
 package com.meg7.soas.oauth.ui;
 
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -83,8 +84,10 @@ public class TweetListAdapter extends RecyclerView.Adapter<TweetListAdapter.Twee
 
     static class TweetViewHolder extends RecyclerView.ViewHolder {
 
+        @Nullable
         @Bind(R.id.image_view)
         ImageView profileImageView;
+        @Nullable
         @Bind(R.id.tweet_txt)
         TextView tweetTextView;
 
